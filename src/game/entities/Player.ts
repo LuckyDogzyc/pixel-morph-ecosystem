@@ -48,6 +48,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setDisplaySize(species.size, species.size)
     const body = this.body as Phaser.Physics.Arcade.Body
     body.setSize(species.size, species.size)
+
+    this.anims.play(`${speciesId}-idle`, true)
   }
 
   startDash(targetX: number, targetY: number, now: number) {
@@ -57,6 +59,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.dashEndAt = now + this.dashDuration
     const body = this.body as Phaser.Physics.Arcade.Body
     body.setVelocity(dir.x * this.speed * this.dashMultiplier, dir.y * this.speed * this.dashMultiplier)
+
+    this.anims.play(`${this.speciesId}-attack`, true)
 
     this.scene.tweens.add({
       targets: this,
@@ -91,6 +95,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   animateTransform() {
+    const key = `${this.speciesId}-transform`
+    this.anims.play(key, true)
+    this.once(`animationcomplete-${key}`, () => this.anims.play(`${this.speciesId}-idle`, true))
+
     this.scene.tweens.add({
       targets: this,
       scale: 1.4,
@@ -102,5 +110,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   animateHit() {
     this.setTint(0xff6666)
     this.scene.time.delayedCall(120, () => this.clearTint())
+  }
+
+  animateDeath() {
+    const key = `${this.speciesId}-death`
+    this.anims.play(key, true)
   }
 }

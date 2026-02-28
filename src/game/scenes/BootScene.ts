@@ -1,33 +1,56 @@
 import Phaser from 'phaser'
 import { SPECIES } from '../data/species'
-import { TYPES } from '../data/types'
+
+const FRAME_SIZE = 24
 
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('boot')
   }
 
-  create() {
-    const graphics = this.add.graphics()
-    graphics.setVisible(false)
-
+  preload() {
     SPECIES.forEach((species) => {
-      const speciesSize = Math.round(species.size)
-      const foodSize = Math.max(6, Math.round(species.size * 0.5))
-      const baseColor = TYPES[species.typeId]?.color ?? species.color
+      this.load.spritesheet(`species-${species.id}`, `assets/sprites/${species.id}.png`, {
+        frameWidth: FRAME_SIZE,
+        frameHeight: FRAME_SIZE,
+      })
+      this.load.image(`food-${species.id}`, `assets/food/${species.id}.png`)
+    })
+  }
 
-      graphics.clear()
-      graphics.fillStyle(baseColor, 1)
-      graphics.fillRect(0, 0, speciesSize, speciesSize)
-      graphics.generateTexture(`species-${species.id}`, speciesSize, speciesSize)
+  create() {
+    SPECIES.forEach((species) => {
+      const id = species.id
 
-      graphics.clear()
-      graphics.fillStyle(baseColor, 1)
-      graphics.fillRect(0, 0, foodSize, foodSize)
-      graphics.generateTexture(`food-${species.id}`, foodSize, foodSize)
+      this.anims.create({
+        key: `${id}-idle`,
+        frames: this.anims.generateFrameNumbers(`species-${id}`, { frames: [0, 1] }),
+        frameRate: 3,
+        repeat: -1,
+      })
+
+      this.anims.create({
+        key: `${id}-attack`,
+        frames: this.anims.generateFrameNumbers(`species-${id}`, { frames: [2, 0] }),
+        frameRate: 10,
+        repeat: 0,
+      })
+
+      this.anims.create({
+        key: `${id}-transform`,
+        frames: this.anims.generateFrameNumbers(`species-${id}`, { frames: [3, 0] }),
+        frameRate: 10,
+        repeat: 0,
+      })
+
+      this.anims.create({
+        key: `${id}-death`,
+        frames: this.anims.generateFrameNumbers(`species-${id}`, { frames: [4, 5] }),
+        frameRate: 8,
+        repeat: 0,
+      })
     })
 
-    graphics.destroy()
     this.scene.start('main')
   }
 }

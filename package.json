@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:sprites": "python3 scripts/generate_sprites.py"
   },
   "devDependencies": {
     "typescript": "~5.9.3",

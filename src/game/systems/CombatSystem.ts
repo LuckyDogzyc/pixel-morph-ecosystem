@@ -72,6 +72,7 @@ export class CombatSystem {
     this.gameOver = true
     this.scene.physics.pause()
     this.player.setTint(0x555555)
+    this.player.animateDeath()
 
     const leaderboard = this.saveScore('Player', this.score)
     this.onGameOver?.(leaderboard)

@@ -24,6 +24,8 @@ export class Creature extends Phaser.Physics.Arcade.Sprite {
     this.setDisplaySize(species.size, species.size)
     const body = this.body as Phaser.Physics.Arcade.Body
     body.setSize(species.size, species.size)
+
+    this.anims.play(`${speciesId}-idle`, true)
   }
 
   setSpeed(speed: number) {
@@ -33,6 +35,8 @@ export class Creature extends Phaser.Physics.Arcade.Sprite {
   }
 
   animateAttack() {
+    this.anims.play(`${this.speciesId}-attack`, true)
+
     this.scene.tweens.add({
       targets: this,
       scale: 1.15,
@@ -43,11 +47,14 @@ export class Creature extends Phaser.Physics.Arcade.Sprite {
 
   animateDeath(onComplete: () => void) {
     this.alive = false
+    const key = `${this.speciesId}-death`
+    this.anims.play(key, true)
+
     this.scene.tweens.add({
       targets: this,
       alpha: 0,
       scale: 0.1,
-      duration: 300,
+      duration: 320,
       onComplete,
     })
   }

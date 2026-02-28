@@ -15,5 +15,7 @@ export class Food extends Phaser.Physics.Arcade.Sprite {
     body.setImmovable(true)
     body.setAllowGravity(false)
     this.setOrigin(0.5, 0.5)
+    this.setDisplaySize(10, 10)
+    body.setSize(10, 10)
   }
 }
