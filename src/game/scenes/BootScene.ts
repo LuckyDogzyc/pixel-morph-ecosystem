@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { SPECIES } from '../data/species'
+import { TYPES } from '../data/types'
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -13,14 +14,15 @@ export class BootScene extends Phaser.Scene {
     SPECIES.forEach((species) => {
       const speciesSize = Math.round(species.size)
       const foodSize = Math.max(6, Math.round(species.size * 0.5))
+      const baseColor = TYPES[species.typeId]?.color ?? species.color
 
       graphics.clear()
-      graphics.fillStyle(species.color, 1)
+      graphics.fillStyle(baseColor, 1)
       graphics.fillRect(0, 0, speciesSize, speciesSize)
       graphics.generateTexture(`species-${species.id}`, speciesSize, speciesSize)
 
       graphics.clear()
-      graphics.fillStyle(species.color, 1)
+      graphics.fillStyle(baseColor, 1)
       graphics.fillRect(0, 0, foodSize, foodSize)
       graphics.generateTexture(`food-${species.id}`, foodSize, foodSize)
     })
