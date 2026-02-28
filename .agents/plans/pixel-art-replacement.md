@@ -1,124 +1,127 @@
-# Feature: Pixel Art Replacement (占位 → 像素素材)
+# Feature: Pixel Art Sprite Replacement (小火龙/妙蛙种子/杰尼龟)
 
-本计划用于把当前纯色矩形占位替换成像素风素材，同时保持动画与克制逻辑不变。所有美术资源需可维护、可替换，并支持后续扩展更多宝可梦。
+本计划将当前“纯色方块”占位渲染替换为像素素材，并建立基础动画（攻击/变身/死亡），确保视觉反馈清晰且可扩展。
 
 ## Feature Description
 
-- 使用像素风 sprite sheet 替换当前程序生成的矩形纹理
-- 支持三种宝可梦（小火龙 / 妙蛙种子 / 杰尼龟）
-- 保持攻击/变身/死亡动画触发
-- 资源组织清晰，后续新增宝可梦只需添加素材与配置
+- 用像素精灵图替换方块材质
+- 为每个物种提供基础动画帧：idle / attack / transform / death
+- 食物使用小图标素材
+- 保持素材可替换（后续换美术时只替换资源和配置）
 
 ## User Story
 
-作为玩家，我希望角色与食物以像素风素材呈现，动画更有手感，同时未来可以轻松扩展更多宝可梦形象。
+作为玩家，我希望看到真实像素角色与清晰动画，从而更容易理解攻击、变身与死亡反馈。
 
 ## Problem Statement
 
-当前画面是程序生成的色块，缺乏像素风表现。需要引入可维护的像素素材结构，并保持既有逻辑与动画不破坏。
+当前使用纯色方块，反馈不够明确，动画仅靠 tween，不利于玩家识别不同形态。
 
 ## Solution Statement
 
-引入 `public/assets/sprites` 与 `public/assets/food` 目录，使用 sprite sheet 或单帧图替代 `BootScene` 生成的矩形纹理；在 `species` 配置中定义素材路径，并在 `BootScene` 中加载；动画沿用现有 tween，后续可升级为帧动画。
+引入 spritesheet + 动画配置：
+- 每个宝可梦一张 spritesheet（24x24，横向多帧）
+- 通过统一动画命名规则加载与播放
+- 食物使用独立小图标
 
 ## Feature Metadata
 
-**Feature Type**: UX/Visual Enhancement
+**Feature Type**: Visual/UX Enhancement
 **Estimated Complexity**: Medium
-**Primary Systems Affected**: BootScene, species data, assets
+**Primary Systems Affected**: BootScene, Player, Creature, Food, assets
 
 ---
 
 ## CONTEXT REFERENCES
 
-### Relevant Codebase Files (必读)
+### Relevant Files
 
-- `PRD.md`
-- `src/game/data/species.ts`
 - `src/game/scenes/BootScene.ts`
 - `src/game/entities/Player.ts`
 - `src/game/entities/Creature.ts`
 - `src/game/entities/Food.ts`
+- `src/game/data/species.ts`
 
-### New/Updated Files
+### New Files / Assets
 
-- `public/assets/sprites/*.png`
-- `public/assets/food/*.png`
-- `src/game/data/species.ts` (UPDATE: add sprite paths)
-- `src/game/scenes/BootScene.ts` (UPDATE: load textures)
+- `public/assets/sprites/charmander.png`
+- `public/assets/sprites/bulbasaur.png`
+- `public/assets/sprites/squirtle.png`
+- `public/assets/food/charmander.png`
+- `public/assets/food/bulbasaur.png`
+- `public/assets/food/squirtle.png`
 
 ---
 
 ## IMPLEMENTATION PLAN
 
-### Phase 1: Asset Structure
+### Phase 1: Asset Pipeline
 
-1. 创建 `public/assets/sprites` 与 `public/assets/food`
-2. 每个宝可梦放置一个 sprite（单帧或多帧）
+1. 添加 assets 目录结构
+2. 为 3 个物种准备 spritesheet（24x24 x 6 帧）
+3. 食物用 10x10 像素图标
 
-### Phase 2: Data Config
+### Phase 2: Load & Animate
 
-1. 在 `species.ts` 中新增 `spritePath`、`foodPath`
-2. 保持 typeId 结构不变
+1. BootScene 加载 spritesheet + food
+2. 统一动画命名规则
+3. Player/Creature 使用动画切换
 
-### Phase 3: BootScene Load
+### Phase 3: Visual Feedback
 
-1. 在 `BootScene` 中加载素材
-2. 替换 `generateTexture` 逻辑
-
-### Phase 4: Animation Compatibility
-
-1. 保留当前 tween 动画（攻击/变身/死亡）
-2. 可选：如果提供 sprite sheet，增加帧动画
+1. 攻击动画触发时播放 attack
+2. 变身动画触发时播放 transform
+3. 死亡播放 death
 
 ---
 
 ## STEP-BY-STEP TASKS
 
-### ADD assets directory
-- **FILES**: `public/assets/sprites`, `public/assets/food`
-- **IMPLEMENT**: 放入三系宝可梦素材
-- **VALIDATE**: 资源可通过 URL 访问
-
-### UPDATE species config
-- **FILE**: `src/game/data/species.ts`
-- **IMPLEMENT**:
-  - add `spritePath` and `foodPath`
-  - 指向 `public/assets/...`
-- **VALIDATE**: 运行时路径正确
+### ADD assets
+- **FILES**: `public/assets/sprites/*.png`, `public/assets/food/*.png`
+- **VALIDATE**: 运行时加载无报错
 
 ### UPDATE BootScene
-- **FILE**: `src/game/scenes/BootScene.ts`
-- **IMPLEMENT**:
-  - preload 纹理
-  - 删除矩形生成逻辑
-- **VALIDATE**: 精灵渲染正常
+- **FILE**: `BootScene.ts`
+- **IMPLEMENT**: 使用 `this.load.spritesheet` 与 `this.load.image`
+- **VALIDATE**: scene 启动后资源可用
 
-### VERIFY animations
-- **FILES**: `Player.ts`, `Creature.ts`
-- **IMPLEMENT**: 不改逻辑，仅验证 Tween 动画仍可触发
-- **VALIDATE**: 攻击/变身/死亡动画可见
+### UPDATE Player/Creature
+- **FILE**: `Player.ts`, `Creature.ts`
+- **IMPLEMENT**: 用 spritesheet 替换 texture
+- **ADD**: `playAnimation(name)` helper
+- **VALIDATE**: idle 正常播放
+
+### UPDATE Food
+- **FILE**: `Food.ts`
+- **IMPLEMENT**: 使用 food 图标而非方块
+
+### UPDATE Animation Hooks
+- **FILE**: `Player.ts`, `Creature.ts`
+- **IMPLEMENT**: attack/transform/death 改为播放动画帧
+- **VALIDATE**: 每个事件触发动画可见
 
 ---
 
 ## TESTING STRATEGY
 
 - 运行 `npm run dev`
-- 验证三种宝可梦正常显示
-- 触发变身/攻击/死亡动画
+- 观察 3 种宝可梦外观
+- 触发攻击、变身、死亡动作
+- 确保 food icon 显示
 
 ---
 
 ## ACCEPTANCE CRITERIA
 
-- [ ] 三种宝可梦素材正确显示
-- [ ] 食物素材正确显示
-- [ ] 动画仍可触发
-- [ ] 结构可扩展（新增宝可梦只需加素材与配置）
+- [ ] 3 个宝可梦 spritesheet 正常显示
+- [ ] attack/transform/death 有帧动画
+- [ ] 食物图标显示正确
+- [ ] 依然保持原有玩法逻辑
 
 ---
 
 ## NOTES
 
-- 如果你没有现成素材，可先用占位像素块再替换
-- 未来若改成 sprite sheet，建议统一帧尺寸
+- 如果暂无正式素材，可用临时像素占位图，但要求结构与帧数一致
+- 后续替换素材只需更新 assets，不改逻辑
