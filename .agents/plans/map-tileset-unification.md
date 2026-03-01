@@ -5,9 +5,10 @@
 ## Feature Description
 
 - 构建大地图与区块化生态
-- 引入 tile-based 地形（草地/水域/桥/墙/城市）
+- 引入 tile-based 地形（草地/水域/桥/墙/城市/树）
 - 统一 tileset 与调色板，保证和角色一致
 - 强化细节与质感（轻微纹理、清晰轮廓）
+- 独立 tile 资源生成后由脚本拼接 tileset
 - 支持可通行/不可通行区域
 
 ## User Story
@@ -46,9 +47,10 @@
 
 ### Phase 1: Tileset & Tilemap Setup
 
-1. 准备 tileset（16x16）
-2. 引入 Phaser tilemap
-3. 创建基础地图层（草地、水域、道路/城市、墙、桥）
+1. 生成独立 tile 资源（16x16）
+2. 由脚本拼接 tileset
+3. 引入 Phaser tilemap
+4. 创建基础地图层（草地、水域、道路/城市、墙、桥、树）
 
 ### Phase 2: Collision Layer
 
@@ -65,6 +67,7 @@
 ## STEP-BY-STEP TASKS
 
 ### ADD tileset assets
+- **FILES**: `public/assets/tiles/*.png`
 - **FILES**: `public/assets/tilesets/world.png`
 - **VALIDATE**: BootScene 能正确加载
 

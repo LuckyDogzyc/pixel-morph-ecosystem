@@ -34,8 +34,9 @@ export class MainScene extends Phaser.Scene {
     if (!tiles) throw new Error('Tileset not found')
 
     const ground = map.createLayer('ground', tiles, 0, 0)
+    const decor = map.createLayer('decor', tiles, 0, 0)
     const collision = map.createLayer('collision', tiles, 0, 0)
-    if (!ground || !collision) throw new Error('Map layers missing')
+    if (!ground || !decor || !collision) throw new Error('Map layers missing')
     collision.setCollisionBetween(1, 1000)
 
     const startSpecies = SPECIES[0].id
