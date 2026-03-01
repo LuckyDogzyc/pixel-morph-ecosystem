@@ -5,6 +5,7 @@ import type { SpeciesId } from '../data/species'
 export class Creature extends Phaser.Physics.Arcade.Sprite {
   speciesId: SpeciesId
   baseSpeed: number
+  canSwim = false
   alive = true
   wanderDirection = new Phaser.Math.Vector2(1, 0)
   wanderUntil = 0
@@ -21,6 +22,7 @@ export class Creature extends Phaser.Physics.Arcade.Sprite {
 
     const species = SPECIES_BY_ID[speciesId]
     this.baseSpeed = species.speed
+    this.canSwim = !!species.canSwim
     this.setDisplaySize(species.size, species.size)
     const body = this.body as Phaser.Physics.Arcade.Body
     body.setSize(species.size, species.size)

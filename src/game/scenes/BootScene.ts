@@ -18,8 +18,6 @@ export class BootScene extends Phaser.Scene {
     })
 
     this.load.image('world-tiles', '/assets/tilesets/world.png')
-    this.load.tilemapTiledJSON('world-map', '/assets/tilemaps/world.json')
-    this.load.tilemapTiledJSON('test-map', '/assets/tilemaps/test-map.json')
   }
 
   create() {

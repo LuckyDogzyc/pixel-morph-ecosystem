@@ -24,6 +24,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   score = 0
   hp = 3
   invulnerableUntil = 0
+  canSwim = false
   private keys?: InputKeys
 
   constructor(scene: Phaser.Scene, x: number, y: number, speciesId: SpeciesId) {
@@ -56,6 +57,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.speciesId = speciesId
     this.speed = species.speed
     this.dashMultiplier = species.dashMultiplier
+    this.canSwim = !!species.canSwim
     this.setTexture(`species-${speciesId}`)
     this.setDisplaySize(species.size, species.size)
     const body = this.body as Phaser.Physics.Arcade.Body

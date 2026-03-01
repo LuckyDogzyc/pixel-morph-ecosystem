@@ -10,6 +10,7 @@ export type Species = {
   size: number
   speed: number
   dashMultiplier: number
+  canSwim?: boolean
   evolvesTo?: SpeciesId[]
   skills?: string[]
 }
@@ -45,6 +46,7 @@ export const SPECIES: Species[] = [
     size: 44,
     speed: 170,
     dashMultiplier: 2.0,
+    canSwim: true,
     evolvesTo: [],
     skills: [],
   },
