@@ -25,7 +25,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   hp = 3
   invulnerableUntil = 0
   private keys?: InputKeys
-  private facingX = 1
 
   constructor(scene: Phaser.Scene, x: number, y: number, speciesId: SpeciesId) {
     super(scene, x, y, `species-${speciesId}`)
@@ -132,10 +131,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   private applyFacing(x: number) {
     if (x > 0.01) {
-      this.facingX = 1
       this.setFlipX(false)
     } else if (x < -0.01) {
-      this.facingX = -1
       this.setFlipX(true)
     }
   }
