@@ -1,9 +1,6 @@
 import json
 from pathlib import Path
 
-WIDTH = 32
-HEIGHT = 24
-
 # Tile ids (1-based)
 GRASS = 1
 WATER = 2
@@ -18,43 +15,63 @@ ROOF = 10
 HOUSE_WALL = 11
 
 
-def build_layers():
+def build_layers(width: int, height: int, detail: str):
     ground = []
     decor = []
     collision = []
 
-    house_x = 24
-    house_y = 7
+    lake_x0 = width // 3
+    lake_x1 = lake_x0 + max(4, width // 5)
+    lake_y0 = height // 3
+    lake_y1 = lake_y0 + max(4, height // 4)
+    lake_mid_y = (lake_y0 + lake_y1) // 2
+
+    road_start = int(width * 0.65)
+    road_y0 = int(height * 0.25)
+    road_y1 = int(height * 0.75)
+
+    house_x = road_start + 2
+    house_y = road_y0 + 1
     house_w = 3
     house_h = 2
 
-    for y in range(HEIGHT):
-        for x in range(WIDTH):
+    house2_x = road_start + 6
+    house2_y = road_y1 - 3
+
+    for y in range(height):
+        for x in range(width):
             tile = GRASS
-            if 10 <= x <= 17 and 8 <= y <= 15:
+            if lake_x0 <= x <= lake_x1 and lake_y0 <= y <= lake_y1:
                 tile = WATER
-            if y == 12 and 10 <= x <= 17:
+            if y == lake_mid_y and lake_x0 <= x <= lake_x1:
                 tile = BRIDGE
-            if x >= 22 and 6 <= y <= 18:
+            if road_start <= x and road_y0 <= y <= road_y1:
                 tile = ROAD
-            if x == 22 and 6 <= y <= 18:
+            if x == road_start and road_y0 <= y <= road_y1:
                 tile = WALL
             ground.append(tile)
 
             deco_tile = 0
-            if y in (1, 2) and x % 2 == 0 and x < 20:
+            if y in (1, 2) and x % 2 == 0 and x < road_start - 2:
                 deco_tile = TREE
-            if y == 20 and 3 <= x <= 18 and x % 2 == 1:
+            if y in (height - 3, height - 2) and x % 2 == 1 and x < road_start - 4:
                 deco_tile = TREE
-            if tile == GRASS and (x + y) % 11 == 0:
+            if tile == GRASS and (x * 3 + y * 2) % 17 == 0:
                 deco_tile = FLOWER
-            if tile == GRASS and 8 <= x <= 18 and y in (7, 16) and (x + y) % 3 == 0:
+            if tile == GRASS and lake_x0 - 2 <= x <= lake_x1 + 2 and y % 3 == 0:
                 deco_tile = ROCK
-            if tile == ROAD and y in (9, 14) and 24 <= x <= 29:
+            if tile == ROAD and y in (road_y0 + 2, road_y1 - 2) and road_start + 2 <= x <= road_start + 6:
                 deco_tile = FENCE
 
             if house_x <= x < house_x + house_w and house_y <= y < house_y + house_h:
                 deco_tile = ROOF if y == house_y else HOUSE_WALL
+            if detail == 'test':
+                if house2_x <= x < house2_x + house_w and house2_y <= y < house2_y + house_h:
+                    deco_tile = ROOF if y == house2_y else HOUSE_WALL
+                if 4 <= x <= 9 and 6 <= y <= 9 and (x + y) % 2 == 0:
+                    deco_tile = TREE
+                if 12 <= x <= 16 and 18 <= y <= 21 and (x + y) % 3 == 0:
+                    deco_tile = TREE
 
             decor.append(deco_tile)
 
@@ -64,13 +81,13 @@ def build_layers():
     return ground, decor, collision
 
 
-def main():
-    ground, decor, collision = build_layers()
+def write_map(path: Path, width: int, height: int, detail: str):
+    ground, decor, collision = build_layers(width, height, detail)
 
     data = {
         "compressionlevel": -1,
-        "height": HEIGHT,
-        "width": WIDTH,
+        "height": height,
+        "width": width,
         "infinite": False,
         "orientation": "orthogonal",
         "renderorder": "right-down",
@@ -86,8 +103,8 @@ def main():
                 "id": 1,
                 "name": "ground",
                 "type": "tilelayer",
-                "width": WIDTH,
-                "height": HEIGHT,
+                "width": width,
+                "height": height,
                 "opacity": 1,
                 "visible": True,
                 "x": 0,
@@ -98,8 +115,8 @@ def main():
                 "id": 2,
                 "name": "decor",
                 "type": "tilelayer",
-                "width": WIDTH,
-                "height": HEIGHT,
+                "width": width,
+                "height": height,
                 "opacity": 1,
                 "visible": True,
                 "x": 0,
@@ -110,8 +127,8 @@ def main():
                 "id": 3,
                 "name": "collision",
                 "type": "tilelayer",
-                "width": WIDTH,
-                "height": HEIGHT,
+                "width": width,
+                "height": height,
                 "opacity": 1,
                 "visible": True,
                 "x": 0,
@@ -136,9 +153,13 @@ def main():
         ],
     }
 
-    out = Path('public/assets/tilemaps/world.json')
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+
+
+def main():
+    write_map(Path('public/assets/tilemaps/world.json'), 32, 24, 'world')
+    write_map(Path('public/assets/tilemaps/test-map.json'), 48, 36, 'test')
 
 
 if __name__ == '__main__':

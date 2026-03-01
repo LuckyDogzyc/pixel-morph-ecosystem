@@ -14,6 +14,7 @@ export class AISystem {
   private creatures: Phaser.Physics.Arcade.Group
   private chaseRadius = 380
   private fearRadius = 320
+  private npcSpeedMultiplier = 0.7
 
   constructor(_scene: Phaser.Scene, player: Player, creatures: Phaser.Physics.Arcade.Group) {
     this.player = player
@@ -29,7 +30,7 @@ export class AISystem {
       const { predator, prey } = this.findTargets(creature)
       const body = creature.body as Phaser.Physics.Arcade.Body
       const maxSpeed = playerSpeed * 0.9
-      const speed = Math.min(creature.baseSpeed, maxSpeed)
+      const speed = Math.min(creature.baseSpeed * this.npcSpeedMultiplier, maxSpeed)
 
       if (predator && predator.distance < this.fearRadius) {
         const dir = normalize(creature.x - predator.x, creature.y - predator.y)

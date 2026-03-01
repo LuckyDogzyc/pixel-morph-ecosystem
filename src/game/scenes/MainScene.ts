@@ -7,6 +7,8 @@ import { CombatSystem } from '../systems/CombatSystem'
 import { HUD } from '../ui/HUD'
 import { MobileControls } from '../ui/MobileControls'
 
+const MAP_KEY = 'test-map'
+
 export class MainScene extends Phaser.Scene {
   private player!: Player
   private creatures!: Phaser.Physics.Arcade.Group
@@ -16,22 +18,21 @@ export class MainScene extends Phaser.Scene {
   private combatSystem!: CombatSystem
   private hud!: HUD
   private mobileControls?: MobileControls
-  private mapWidth = 32
-  private mapHeight = 24
-  private tileSize = 16
-  private worldWidth = this.mapWidth * this.tileSize
-  private worldHeight = this.mapHeight * this.tileSize
+  private worldWidth = 0
+  private worldHeight = 0
 
   constructor() {
     super('main')
   }
 
   create() {
-    this.physics.world.setBounds(0, 0, this.worldWidth, this.worldHeight)
-
-    const map = this.make.tilemap({ key: 'world-map' })
+    const map = this.make.tilemap({ key: MAP_KEY })
     const tiles = map.addTilesetImage('world', 'world-tiles')
     if (!tiles) throw new Error('Tileset not found')
+
+    this.worldWidth = map.widthInPixels
+    this.worldHeight = map.heightInPixels
+    this.physics.world.setBounds(0, 0, this.worldWidth, this.worldHeight)
 
     const ground = map.createLayer('ground', tiles, 0, 0)
     const decor = map.createLayer('decor', tiles, 0, 0)

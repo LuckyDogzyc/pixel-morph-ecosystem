@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import { SPECIES } from '../data/species'
 
-const FRAME_SIZE = 24
+const FRAME_SIZE = 96
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -19,6 +19,7 @@ export class BootScene extends Phaser.Scene {
 
     this.load.image('world-tiles', '/assets/tilesets/world.png')
     this.load.tilemapTiledJSON('world-map', '/assets/tilemaps/world.json')
+    this.load.tilemapTiledJSON('test-map', '/assets/tilemaps/test-map.json')
   }
 
   create() {

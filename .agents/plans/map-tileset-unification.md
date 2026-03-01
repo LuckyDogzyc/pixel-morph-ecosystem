@@ -73,7 +73,8 @@
 
 ### CREATE tilemap data
 - **FILES**: `public/assets/tilemaps/world.json`
-- **VALIDATE**: MainScene 渲染地图
+- **FILES**: `public/assets/tilemaps/test-map.json`
+- **VALIDATE**: MainScene 渲染地图（测试地图优先）
 
 ### UPDATE MainScene
 - **IMPLEMENT**: 加载 tilemap + tileset

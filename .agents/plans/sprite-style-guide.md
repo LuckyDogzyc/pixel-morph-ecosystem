@@ -47,7 +47,7 @@
 
 ### Sprite Specs
 
-- 帧尺寸：24x24
+- 帧尺寸：96x96（4x）
 - 帧数量：6（横向）
 - 帧顺序：idle / blink / attack / transform / death_1 / death_2
 - 线条：1px 深色描边（统一轮廓风格）

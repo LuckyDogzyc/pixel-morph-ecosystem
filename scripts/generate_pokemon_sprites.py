@@ -3,7 +3,6 @@ import json
 import os
 import time
 from pathlib import Path
-from typing import Iterable
 from urllib import request
 
 from PIL import Image, ImageEnhance
@@ -15,6 +14,10 @@ MODEL_CANDIDATES = [
     'gemini-2.5-flash-image',
     'gemini-2.0-flash-exp-image-generation',
 ]
+
+FRAME_SIZE = 96
+SHRINK_SIZE = 80
+BLINK_SHIFT = 2
 
 SPECIES = {
     'charmander': 'Charmander (Pokemon) facing right',
@@ -131,16 +134,16 @@ def request_image(prompt: str) -> bytes:
 
 
 def build_spritesheet(base: Image.Image) -> Image.Image:
-    base = base.resize((24, 24), Image.NEAREST)
+    base = base.resize((FRAME_SIZE, FRAME_SIZE), Image.NEAREST)
 
     frames = []
     frames.append(base)
 
     blink = Image.new('RGBA', base.size, (0, 0, 0, 0))
-    blink.paste(base, (0, -1))
+    blink.paste(base, (0, -BLINK_SHIFT))
     frames.append(blink)
 
-    attack = ImageEnhance.Color(base).enhance(1.4)
+    attack = ImageEnhance.Color(base).enhance(1.35)
     frames.append(attack)
 
     transform = base.copy()
@@ -155,22 +158,23 @@ def build_spritesheet(base: Image.Image) -> Image.Image:
     dim = ImageEnhance.Brightness(base).enhance(0.6)
     frames.append(dim)
 
-    shrink = base.resize((20, 20), Image.NEAREST)
+    shrink = base.resize((SHRINK_SIZE, SHRINK_SIZE), Image.NEAREST)
     canvas = Image.new('RGBA', base.size, (0, 0, 0, 0))
-    canvas.paste(shrink, (2, 2))
+    offset = (FRAME_SIZE - SHRINK_SIZE) // 2
+    canvas.paste(shrink, (offset, offset))
     frames.append(canvas)
 
-    sheet = Image.new('RGBA', (24 * len(frames), 24), (0, 0, 0, 0))
+    sheet = Image.new('RGBA', (FRAME_SIZE * len(frames), FRAME_SIZE), (0, 0, 0, 0))
     for i, frame in enumerate(frames):
-        sheet.paste(frame, (i * 24, 0))
+        sheet.paste(frame, (i * FRAME_SIZE, 0))
 
     return sheet
 
 
 def generate_species(species_id: str, description: str):
     prompt = (
-        f'Create a single 24x24 pixel art sprite of {description}, '
-        'clean pixel art, transparent background, 1px outline, no text.'
+        f'Create a single {FRAME_SIZE}x{FRAME_SIZE} pixel art sprite of {description}, '
+        'detailed pixel art, transparent background, 1px outline, no text.'
     )
     img_data = request_image(prompt)
 
