@@ -16,8 +16,11 @@ export class MainScene extends Phaser.Scene {
   private combatSystem!: CombatSystem
   private hud!: HUD
   private mobileControls?: MobileControls
-  private worldWidth = 2000
-  private worldHeight = 1400
+  private mapWidth = 32
+  private mapHeight = 24
+  private tileSize = 16
+  private worldWidth = this.mapWidth * this.tileSize
+  private worldHeight = this.mapHeight * this.tileSize
 
   constructor() {
     super('main')
@@ -26,11 +29,23 @@ export class MainScene extends Phaser.Scene {
   create() {
     this.physics.world.setBounds(0, 0, this.worldWidth, this.worldHeight)
 
+    const map = this.make.tilemap({ key: 'world-map' })
+    const tiles = map.addTilesetImage('world', 'world-tiles')
+    if (!tiles) throw new Error('Tileset not found')
+
+    const ground = map.createLayer('ground', tiles, 0, 0)
+    const collision = map.createLayer('collision', tiles, 0, 0)
+    if (!ground || !collision) throw new Error('Map layers missing')
+    collision.setCollisionBetween(1, 1000)
+
     const startSpecies = SPECIES[0].id
     this.player = new Player(this, this.worldWidth / 2, this.worldHeight / 2, startSpecies)
 
     this.creatures = this.physics.add.group()
     this.foods = this.physics.add.group()
+
+    this.physics.add.collider(this.player, collision)
+    this.physics.add.collider(this.creatures, collision)
 
     this.spawnSystem = new SpawnSystem(this, this.creatures, this.foods, this.worldWidth, this.worldHeight)
     this.aiSystem = new AISystem(this, this.player, this.creatures)
@@ -40,8 +55,6 @@ export class MainScene extends Phaser.Scene {
 
     this.cameras.main.startFollow(this.player)
     this.cameras.main.setBounds(0, 0, this.worldWidth, this.worldHeight)
-
-    this.createBackground()
   }
 
   update(time: number) {
@@ -55,15 +68,4 @@ export class MainScene extends Phaser.Scene {
     this.hud.update()
   }
 
-  private createBackground() {
-    const grid = this.add.graphics()
-    grid.lineStyle(1, 0x1d2230, 0.6)
-    const size = 80
-    for (let x = 0; x <= this.worldWidth; x += size) {
-      grid.lineBetween(x, 0, x, this.worldHeight)
-    }
-    for (let y = 0; y <= this.worldHeight; y += size) {
-      grid.lineBetween(0, y, this.worldWidth, y)
-    }
-  }
 }

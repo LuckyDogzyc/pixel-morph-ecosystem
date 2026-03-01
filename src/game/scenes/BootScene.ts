@@ -16,6 +16,9 @@ export class BootScene extends Phaser.Scene {
       })
       this.load.image(`card-${species.id}`, `/assets/cards/${species.id}.png`)
     })
+
+    this.load.image('world-tiles', '/assets/tilesets/world.png')
+    this.load.tilemapTiledJSON('world-map', '/assets/tilemaps/world.json')
   }
 
   create() {
