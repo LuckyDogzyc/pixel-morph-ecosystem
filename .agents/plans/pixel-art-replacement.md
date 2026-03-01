@@ -63,9 +63,10 @@
 
 ### Phase 2: Load & Animate
 
-1. BootScene 加载 spritesheet + food
-2. 统一动画命名规则
-3. Player/Creature 使用动画切换
+1. 每个宝可梦一张 spritesheet（横向 6 帧）
+2. BootScene 加载 spritesheet + 卡片图
+3. 统一动画命名规则（species-idle/attack/transform/death）
+4. Player/Creature 使用动画切换
 
 ### Phase 3: Visual Feedback
 
@@ -84,18 +85,20 @@
 ### UPDATE BootScene
 - **FILE**: `BootScene.ts`
 - **IMPLEMENT**: 使用 `this.load.spritesheet` 与 `this.load.image`
+- **ADD**: 创建动画 key：`{species}-idle` / `attack` / `transform` / `death`
 - **VALIDATE**: scene 启动后资源可用
 
 ### UPDATE Player/Creature
 - **FILE**: `Player.ts`, `Creature.ts`
 - **IMPLEMENT**: 用 spritesheet 替换 texture
 - **ADD**: `playAnimation(name)` helper
+- **ADD**: attack/transform/death 播完回 idle
 - **VALIDATE**: idle 正常播放
 
 ### UPDATE Food
 - **FILE**: `Food.ts`
 - **IMPLEMENT**: 使用宝可梦卡片素材替代方块
-- **ADD**: 卡片轻微旋转动画（循环）
+- **ADD**: 卡片轻微旋转动画（循环，例如 -8° ~ 8°）
 
 ### UPDATE Animation Hooks
 - **FILE**: `Player.ts`, `Creature.ts`
@@ -117,6 +120,7 @@
 
 - [ ] 3 个宝可梦 spritesheet 正常显示
 - [ ] attack/transform/death 有帧动画
+- [ ] 动画播放后能回到 idle
 - [ ] 食物卡片显示并旋转
 - [ ] 依然保持原有玩法逻辑
 
@@ -125,6 +129,7 @@
 ## NOTES
 
 - 如果暂无正式素材，可用临时像素占位图，但要求结构与帧数一致
+- 建议帧顺序：idle / blink / attack / transform / death_1 / death_2
 - 后续替换素材只需更新 assets，不改逻辑
 
 ## POKEMON 设定参考（用于卡片变身合理性）
