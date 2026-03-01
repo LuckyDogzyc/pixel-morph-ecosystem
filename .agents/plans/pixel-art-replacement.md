@@ -6,7 +6,7 @@
 
 - 用像素精灵图替换方块材质
 - 为每个物种提供基础动画帧：idle / attack / transform / death
-- 食物使用小图标素材
+- 食物替换为“小型旋转的基础宝可梦卡片”素材
 - 保持素材可替换（后续换美术时只替换资源和配置）
 
 ## User Story
@@ -47,9 +47,9 @@
 - `public/assets/sprites/charmander.png`
 - `public/assets/sprites/bulbasaur.png`
 - `public/assets/sprites/squirtle.png`
-- `public/assets/food/charmander.png`
-- `public/assets/food/bulbasaur.png`
-- `public/assets/food/squirtle.png`
+- `public/assets/cards/charmander.png`
+- `public/assets/cards/bulbasaur.png`
+- `public/assets/cards/squirtle.png`
 
 ---
 
@@ -78,7 +78,7 @@
 ## STEP-BY-STEP TASKS
 
 ### ADD assets
-- **FILES**: `public/assets/sprites/*.png`, `public/assets/food/*.png`
+- **FILES**: `public/assets/sprites/*.png`, `public/assets/cards/*.png`
 - **VALIDATE**: 运行时加载无报错
 
 ### UPDATE BootScene
@@ -94,7 +94,8 @@
 
 ### UPDATE Food
 - **FILE**: `Food.ts`
-- **IMPLEMENT**: 使用 food 图标而非方块
+- **IMPLEMENT**: 使用宝可梦卡片素材替代方块
+- **ADD**: 卡片轻微旋转动画（循环）
 
 ### UPDATE Animation Hooks
 - **FILE**: `Player.ts`, `Creature.ts`
@@ -116,7 +117,7 @@
 
 - [ ] 3 个宝可梦 spritesheet 正常显示
 - [ ] attack/transform/death 有帧动画
-- [ ] 食物图标显示正确
+- [ ] 食物卡片显示并旋转
 - [ ] 依然保持原有玩法逻辑
 
 ---
