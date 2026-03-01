@@ -7,6 +7,7 @@
 - 建立固定的像素风格规范（尺寸、线条、调色板、阴影、光源）
 - 规范 spritesheet 帧顺序与动画节奏
 - 规范卡片素材尺寸与装饰元素
+- 规范场景 tileset 的尺寸与调色板（宝可梦彩色像素风）
 - 定义 Gemini 生成提示词模板与后处理步骤
 - 建立“生成 → 审核 → 替换”流程
 
@@ -26,7 +27,7 @@
 
 **Feature Type**: Art Pipeline / Process
 **Estimated Complexity**: Low-Medium
-**Primary Systems Affected**: assets, animation, generation pipeline
+**Primary Systems Affected**: assets, animation, generation pipeline, tileset
 
 ---
 
@@ -36,6 +37,7 @@
 
 - `public/assets/sprites/*.png`
 - `public/assets/cards/*.png`
+- `public/assets/tilesets/*.png`
 - `src/game/scenes/BootScene.ts`
 
 ---
@@ -62,6 +64,13 @@
 
 - 主色 + 次色 + 描边色（3-5 色为主）
 - 避免过多高饱和颜色
+
+### Scene/Tileset Specs
+
+- Tile 尺寸：16x16（贴近 GBA 宝可梦像素风）
+- 色板：与角色统一的彩色像素风（避免高饱和、避免渐变）
+- 地形 tile：水 / 草地 / 城市地面 / 墙 / 桥
+- 可通行/不可通行以 tile 层区分
 
 ---
 
@@ -103,9 +112,11 @@
 ### GENERATE assets
 - **OUTPUT**: `public/assets/sprites/*.png`
 - **OUTPUT**: `public/assets/cards/*.png`
+- **OUTPUT**: `public/assets/tilesets/*.png`
 
 ### REVIEW
 - **CHECK**: 线条一致 / 色彩一致 / 帧顺序一致
+- **CHECK**: tileset 与角色风格一致（调色板统一）
 
 ---
 
