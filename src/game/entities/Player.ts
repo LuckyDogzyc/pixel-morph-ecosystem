@@ -25,6 +25,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   hp = 3
   invulnerableUntil = 0
   private keys?: InputKeys
+  private facingX = 1
 
   constructor(scene: Phaser.Scene, x: number, y: number, speciesId: SpeciesId) {
     super(scene, x, y, `species-${speciesId}`)
@@ -84,8 +85,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   update(now: number, mobileVector?: Phaser.Math.Vector2, mobileDash?: boolean) {
     const pointer = this.scene.input.activePointer
-    const angle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY)
-    this.setRotation(angle)
+    this.setRotation(0)
 
     const body = this.body as Phaser.Physics.Arcade.Body
 
@@ -94,6 +94,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.dashActive = false
       } else {
         body.setVelocity(this.dashDirection.x * this.speed * this.dashMultiplier, this.dashDirection.y * this.speed * this.dashMultiplier)
+        this.applyFacing(this.dashDirection.x)
         return
       }
     }
@@ -106,9 +107,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (moveVector) {
       body.setVelocity(moveVector.x * this.speed, moveVector.y * this.speed)
+      this.applyFacing(moveVector.x)
     } else if (pointer.isDown && (pointer.buttons & 1) === 1) {
       const dir = normalize(pointer.worldX - this.x, pointer.worldY - this.y)
       body.setVelocity(dir.x * this.speed, dir.y * this.speed)
+      this.applyFacing(dir.x)
     } else {
       body.setVelocity(0, 0)
     }
@@ -125,6 +128,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       yoyo: true,
       duration: 140,
     })
+  }
+
+  private applyFacing(x: number) {
+    if (x > 0.01) {
+      this.facingX = 1
+      this.setFlipX(false)
+    } else if (x < -0.01) {
+      this.facingX = -1
+      this.setFlipX(true)
+    }
   }
 
   private getMoveVector(mobileVector?: Phaser.Math.Vector2) {
