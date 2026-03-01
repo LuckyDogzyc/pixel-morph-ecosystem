@@ -5,7 +5,7 @@ export class Food extends Phaser.Physics.Arcade.Sprite {
   speciesId: SpeciesId
 
   constructor(scene: Phaser.Scene, x: number, y: number, speciesId: SpeciesId) {
-    super(scene, x, y, `food-${speciesId}`)
+    super(scene, x, y, `card-${speciesId}`)
     this.speciesId = speciesId
 
     scene.add.existing(this)
@@ -15,7 +15,17 @@ export class Food extends Phaser.Physics.Arcade.Sprite {
     body.setImmovable(true)
     body.setAllowGravity(false)
     this.setOrigin(0.5, 0.5)
-    this.setDisplaySize(10, 10)
-    body.setSize(10, 10)
+    this.setDisplaySize(16, 24)
+    body.setSize(16, 24)
+
+    this.setAngle(-8)
+    scene.tweens.add({
+      targets: this,
+      angle: 8,
+      duration: 800,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    })
   }
 }

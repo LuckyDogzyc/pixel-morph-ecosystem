@@ -10,11 +10,11 @@ export class BootScene extends Phaser.Scene {
 
   preload() {
     SPECIES.forEach((species) => {
-      this.load.spritesheet(`species-${species.id}`, `assets/sprites/${species.id}.png`, {
+      this.load.spritesheet(`species-${species.id}`, `/assets/sprites/${species.id}.png`, {
         frameWidth: FRAME_SIZE,
         frameHeight: FRAME_SIZE,
       })
-      this.load.image(`food-${species.id}`, `assets/food/${species.id}.png`)
+      this.load.image(`card-${species.id}`, `/assets/cards/${species.id}.png`)
     })
   }
 
