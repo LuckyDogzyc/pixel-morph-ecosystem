@@ -5,6 +5,7 @@ import { SpawnSystem } from '../systems/SpawnSystem'
 import { AISystem } from '../systems/AISystem'
 import { CombatSystem } from '../systems/CombatSystem'
 import { HUD } from '../ui/HUD'
+import { MobileControls } from '../ui/MobileControls'
 
 export class MainScene extends Phaser.Scene {
   private player!: Player
@@ -14,6 +15,7 @@ export class MainScene extends Phaser.Scene {
   private aiSystem!: AISystem
   private combatSystem!: CombatSystem
   private hud!: HUD
+  private mobileControls?: MobileControls
   private worldWidth = 2000
   private worldHeight = 1400
 
@@ -34,6 +36,7 @@ export class MainScene extends Phaser.Scene {
     this.aiSystem = new AISystem(this, this.player, this.creatures)
     this.combatSystem = new CombatSystem(this, this.player, this.creatures, this.foods)
     this.hud = new HUD(this, this.player, this.combatSystem)
+    this.mobileControls = new MobileControls(this)
 
     this.cameras.main.startFollow(this.player)
     this.cameras.main.setBounds(0, 0, this.worldWidth, this.worldHeight)
@@ -43,7 +46,9 @@ export class MainScene extends Phaser.Scene {
 
   update(time: number) {
     if (!this.combatSystem.gameOver) {
-      this.player.update(time)
+      const mobileVector = this.mobileControls?.getMoveVector()
+      const mobileDash = this.mobileControls?.consumeDash()
+      this.player.update(time, mobileVector, mobileDash)
       this.aiSystem.update(time)
       this.spawnSystem.update(time)
     }
