@@ -25,6 +25,17 @@ PALETTE = {
     'tree_light': (120, 200, 128, 255),
     'trunk': (150, 110, 70, 255),
     'trunk_dark': (120, 84, 54, 255),
+    'flower': (232, 120, 176, 255),
+    'flower_center': (248, 232, 120, 255),
+    'rock': (156, 156, 164, 255),
+    'rock_light': (184, 184, 192, 255),
+    'rock_dark': (112, 112, 124, 255),
+    'fence': (170, 130, 88, 255),
+    'fence_dark': (130, 98, 64, 255),
+    'roof': (196, 96, 88, 255),
+    'roof_dark': (150, 70, 64, 255),
+    'house_wall': (220, 208, 176, 255),
+    'house_shadow': (190, 176, 148, 255),
 }
 
 
@@ -35,9 +46,9 @@ def new_tile():
 def draw_grass(tile: Image.Image):
     draw = ImageDraw.Draw(tile)
     draw.rectangle([0, 0, TILE - 1, TILE - 1], fill=PALETTE['grass'])
-    for dx, dy in [(2, 3), (9, 6), (5, 10), (12, 2)]:
+    for dx, dy in [(2, 3), (9, 6), (5, 10), (12, 2), (1, 12)]:
         draw.rectangle([dx, dy, dx + 1, dy + 1], fill=PALETTE['grass_dark'])
-    for dx, dy in [(4, 5), (7, 1), (11, 9)]:
+    for dx, dy in [(4, 5), (7, 1), (11, 9), (13, 13)]:
         draw.rectangle([dx, dy, dx, dy], fill=PALETTE['grass_light'])
 
 
@@ -77,14 +88,51 @@ def draw_bridge(tile: Image.Image):
 
 def draw_tree(tile: Image.Image):
     draw = ImageDraw.Draw(tile)
-    draw.rectangle([0, 0, TILE - 1, TILE - 1], fill=PALETTE['grass'])
-    # canopy
     draw.ellipse([1, 1, 14, 12], fill=PALETTE['tree'])
     draw.ellipse([3, 2, 12, 10], fill=PALETTE['tree_light'])
     draw.ellipse([2, 4, 10, 13], fill=PALETTE['tree_dark'])
-    # trunk
     draw.rectangle([7, 10, 8, 15], fill=PALETTE['trunk'])
     draw.rectangle([7, 12, 7, 15], fill=PALETTE['trunk_dark'])
+
+
+def draw_flower(tile: Image.Image):
+    draw = ImageDraw.Draw(tile)
+    for dx, dy in [(7, 6), (6, 7), (8, 7), (7, 8)]:
+        draw.rectangle([dx, dy, dx, dy], fill=PALETTE['flower'])
+    draw.rectangle([7, 7, 7, 7], fill=PALETTE['flower_center'])
+    draw.rectangle([7, 9, 7, 10], fill=PALETTE['grass_dark'])
+
+
+def draw_rock(tile: Image.Image):
+    draw = ImageDraw.Draw(tile)
+    draw.ellipse([3, 6, 12, 13], fill=PALETTE['rock'])
+    draw.ellipse([5, 7, 10, 11], fill=PALETTE['rock_light'])
+    draw.line([4, 11, 11, 11], fill=PALETTE['rock_dark'])
+
+
+def draw_fence(tile: Image.Image):
+    draw = ImageDraw.Draw(tile)
+    draw.line([0, 6, TILE - 1, 6], fill=PALETTE['fence'])
+    draw.line([0, 9, TILE - 1, 9], fill=PALETTE['fence_dark'])
+    for x in (3, 7, 11, 15):
+        draw.rectangle([x, 3, x, 12], fill=PALETTE['fence'])
+        draw.rectangle([x, 11, x, 12], fill=PALETTE['fence_dark'])
+
+
+def draw_roof(tile: Image.Image):
+    draw = ImageDraw.Draw(tile)
+    draw.rectangle([0, 5, TILE - 1, 12], fill=PALETTE['roof'])
+    draw.line([0, 5, TILE - 1, 5], fill=PALETTE['roof_dark'])
+    for x in range(0, TILE, 4):
+        draw.line([x, 6, x, 12], fill=PALETTE['roof_dark'])
+
+
+def draw_house_wall(tile: Image.Image):
+    draw = ImageDraw.Draw(tile)
+    draw.rectangle([0, 6, TILE - 1, 15], fill=PALETTE['house_wall'])
+    draw.line([0, 6, TILE - 1, 6], fill=PALETTE['house_shadow'])
+    draw.rectangle([6, 9, 9, 12], fill=PALETTE['house_shadow'])
+    draw.rectangle([7, 10, 8, 11], fill=PALETTE['house_wall'])
 
 
 def save_tile(tile: Image.Image, name: str):
@@ -136,6 +184,31 @@ def main():
     draw_tree(tree)
     save_tile(tree, 'tree')
     tiles.append(tree)
+
+    flower = new_tile()
+    draw_flower(flower)
+    save_tile(flower, 'flower')
+    tiles.append(flower)
+
+    rock = new_tile()
+    draw_rock(rock)
+    save_tile(rock, 'rock')
+    tiles.append(rock)
+
+    fence = new_tile()
+    draw_fence(fence)
+    save_tile(fence, 'fence')
+    tiles.append(fence)
+
+    roof = new_tile()
+    draw_roof(roof)
+    save_tile(roof, 'roof')
+    tiles.append(roof)
+
+    house_wall = new_tile()
+    draw_house_wall(house_wall)
+    save_tile(house_wall, 'house_wall')
+    tiles.append(house_wall)
 
     assemble_tileset(tiles)
 

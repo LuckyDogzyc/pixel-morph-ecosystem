@@ -11,12 +11,22 @@ ROAD = 3
 WALL = 4
 BRIDGE = 5
 TREE = 6
+FLOWER = 7
+ROCK = 8
+FENCE = 9
+ROOF = 10
+HOUSE_WALL = 11
 
 
 def build_layers():
     ground = []
     decor = []
     collision = []
+
+    house_x = 24
+    house_y = 7
+    house_w = 3
+    house_h = 2
 
     for y in range(HEIGHT):
         for x in range(WIDTH):
@@ -36,9 +46,19 @@ def build_layers():
                 deco_tile = TREE
             if y == 20 and 3 <= x <= 18 and x % 2 == 1:
                 deco_tile = TREE
+            if tile == GRASS and (x + y) % 11 == 0:
+                deco_tile = FLOWER
+            if tile == GRASS and 8 <= x <= 18 and y in (7, 16) and (x + y) % 3 == 0:
+                deco_tile = ROCK
+            if tile == ROAD and y in (9, 14) and 24 <= x <= 29:
+                deco_tile = FENCE
+
+            if house_x <= x < house_x + house_w and house_y <= y < house_y + house_h:
+                deco_tile = ROOF if y == house_y else HOUSE_WALL
+
             decor.append(deco_tile)
 
-            blocked = tile in (WATER, WALL) or deco_tile == TREE
+            blocked = tile in (WATER, WALL) or deco_tile in (TREE, ROCK, FENCE, ROOF, HOUSE_WALL)
             collision.append(1 if blocked else 0)
 
     return ground, decor, collision
