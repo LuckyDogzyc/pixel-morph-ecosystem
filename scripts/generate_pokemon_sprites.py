@@ -15,9 +15,9 @@ MODEL_CANDIDATES = [
     'gemini-2.0-flash-exp-image-generation',
 ]
 
-FRAME_SIZE = 96
-SHRINK_SIZE = 80
-BLINK_SHIFT = 2
+FRAME_SIZE = 48
+SHRINK_SIZE = 40
+BLINK_SHIFT = 1
 
 SPECIES = {
     'charmander': 'Charmander (Pokemon) facing right',
@@ -37,7 +37,7 @@ def color_dist(c1, c2):
     return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1]) + abs(c1[2] - c2[2])
 
 
-def clean_image(path: Path, threshold: int = 40):
+def clean_image(path: Path, threshold: int = 60):
     img = Image.open(path).convert('RGBA')
     w, h = img.size
     pixels = img.load()
@@ -87,6 +87,21 @@ def clean_image(path: Path, threshold: int = 40):
             if 0 <= nx < w and 0 <= ny < h and not visited[ny][nx] and is_bg(nx, ny):
                 visited[ny][nx] = True
                 queue.append((nx, ny))
+
+    # Remove light halo pixels that touch transparency.
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = pixels[x, y]
+            if a == 0:
+                continue
+            if color_dist((r, g, b), bg) > threshold:
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < w and 0 <= ny < h:
+                    if pixels[nx, ny][3] == 0:
+                        pixels[x, y] = (0, 0, 0, 0)
+                        break
 
     img.save(path)
 
@@ -174,7 +189,7 @@ def build_spritesheet(base: Image.Image) -> Image.Image:
 def generate_species(species_id: str, description: str):
     prompt = (
         f'Create a single {FRAME_SIZE}x{FRAME_SIZE} pixel art sprite of {description}, '
-        'detailed pixel art, transparent background, 1px outline, no text.'
+        'clean pixel art, limited palette, transparent background, 1px outline, no text.'
     )
     img_data = request_image(prompt)
 

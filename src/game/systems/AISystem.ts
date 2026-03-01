@@ -35,14 +35,14 @@ export class AISystem {
       if (predator && predator.distance < this.fearRadius) {
         const dir = normalize(creature.x - predator.x, creature.y - predator.y)
         body.setVelocity(dir.x * speed, dir.y * speed)
-        creature.setRotation(Phaser.Math.Angle.Between(creature.x, creature.y, predator.x, predator.y))
+        creature.applyFacing(dir.x)
         return
       }
 
       if (prey && prey.distance < this.chaseRadius) {
         const dir = normalize(prey.x - creature.x, prey.y - creature.y)
         body.setVelocity(dir.x * speed, dir.y * speed)
-        creature.setRotation(Phaser.Math.Angle.Between(creature.x, creature.y, prey.x, prey.y))
+        creature.applyFacing(dir.x)
         return
       }
 
@@ -52,6 +52,7 @@ export class AISystem {
         creature.wanderUntil = time + Phaser.Math.Between(800, 1600)
       }
       body.setVelocity(creature.wanderDirection.x * speed * 0.6, creature.wanderDirection.y * speed * 0.6)
+      creature.applyFacing(creature.wanderDirection.x)
     })
   }
 

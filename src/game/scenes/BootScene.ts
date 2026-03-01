@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import { SPECIES } from '../data/species'
 
-const FRAME_SIZE = 96
+const FRAME_SIZE = 48
 
 export class BootScene extends Phaser.Scene {
   constructor() {

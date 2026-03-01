@@ -36,6 +36,9 @@ PALETTE = {
     'roof_dark': (150, 70, 64, 255),
     'house_wall': (220, 208, 176, 255),
     'house_shadow': (190, 176, 148, 255),
+    'mountain': (136, 152, 168, 255),
+    'mountain_light': (168, 184, 200, 255),
+    'mountain_dark': (96, 112, 136, 255),
 }
 
 
@@ -141,6 +144,14 @@ def save_tile(tile: Image.Image, name: str):
     tile.save(out)
 
 
+def draw_mountain(tile: Image.Image):
+    draw = ImageDraw.Draw(tile)
+    draw.polygon([(2, 14), (8, 4), (14, 14)], fill=PALETTE['mountain'])
+    draw.polygon([(4, 14), (8, 8), (12, 14)], fill=PALETTE['mountain_light'])
+    draw.line([2, 14, 8, 4], fill=PALETTE['mountain_dark'])
+    draw.line([8, 4, 14, 14], fill=PALETTE['mountain_dark'])
+
+
 def assemble_tileset(tiles):
     img = Image.new('RGBA', (TILE * GRID, TILE * GRID), (0, 0, 0, 0))
     for idx, tile in enumerate(tiles):
@@ -209,6 +220,11 @@ def main():
     draw_house_wall(house_wall)
     save_tile(house_wall, 'house_wall')
     tiles.append(house_wall)
+
+    mountain = new_tile()
+    draw_mountain(mountain)
+    save_tile(mountain, 'mountain')
+    tiles.append(mountain)
 
     assemble_tileset(tiles)
 

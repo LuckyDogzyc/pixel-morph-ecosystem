@@ -45,6 +45,15 @@ export class Creature extends Phaser.Physics.Arcade.Sprite {
     })
   }
 
+  applyFacing(x: number) {
+    if (x > 0.01) {
+      this.setFlipX(false)
+    } else if (x < -0.01) {
+      this.setFlipX(true)
+    }
+    this.setRotation(0)
+  }
+
   animateDeath(onComplete: () => void) {
     this.alive = false
     const key = `${this.speciesId}-death`
